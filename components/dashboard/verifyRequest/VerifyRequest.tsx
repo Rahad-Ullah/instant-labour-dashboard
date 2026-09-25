@@ -40,7 +40,6 @@ export default function VerifyReuest() {
   });
 
   const { meta, data: users } = data || {};
-  console.log("users --", users);
 
   const { mutate: deleteUser } = useDeleteUser();
 

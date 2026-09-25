@@ -7,7 +7,7 @@ const geAllUser = async (
 ): Promise<
   ApiResponse<IUser[]> & { meta?: PaginatedResponse<IUser>["meta"] }
 > => {
-  const res = await api.get("/dashboard/users", { params });
+  const res = await api.get("/dashboard/users-verification", { params });
   return res.data;
 };
 
