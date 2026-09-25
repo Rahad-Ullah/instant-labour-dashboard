@@ -7,6 +7,15 @@ const geAllUser = async (
 ): Promise<
   ApiResponse<IUser[]> & { meta?: PaginatedResponse<IUser>["meta"] }
 > => {
+  const res = await api.get("/dashboard/users", { params });
+  return res.data;
+};
+
+const getAllVerificationRequests = async (
+  params = {} as IUserFilterableFields,
+): Promise<
+  ApiResponse<IUser[]> & { meta?: PaginatedResponse<IUser>["meta"] }
+> => {
   const res = await api.get("/dashboard/users-verification", { params });
   return res.data;
 };
@@ -35,6 +44,7 @@ const deleteUser = async (id: string): Promise<ApiResponse<IUser>> => {
 
 export const UserApis = {
   geAllUser,
+  getAllVerificationRequests,
   getUserDetail,
   updateUserStatus,
   toggleUserVerification,

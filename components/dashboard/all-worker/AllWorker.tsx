@@ -50,7 +50,6 @@ export default function AllWorker() {
 
   const workers = response?.data || [];
   const meta = response?.meta;
-  console.log("data all worker", workers);
 
   // Update user status mutation
   const { mutate: updateStatus, isPending: isUpdating } =

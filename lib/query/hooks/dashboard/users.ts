@@ -1,4 +1,4 @@
-import { IUserFilterableFields } from "@/types/users";
+import { IUser, IUserFilterableFields } from "@/types/users";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -13,13 +13,57 @@ export const useGetAllUser = (params = {} as IUserFilterableFields) => {
     queryFn: async () => {
       const response = await UserApis.geAllUser(params);
 
+      let data: IUser[] = [];
+      let meta = response?.meta;
+
+      if (Array.isArray(response?.data)) {
+        data = response.data;
+      } else if (Array.isArray((response?.data as any)?.data)) {
+        data = (response.data as any).data;
+        meta = (response.data as any)?.meta || meta;
+      } else if (Array.isArray(response)) {
+        data = response as any;
+      }
+
       return {
-        data: response.data || [],
-        meta: response.meta,
+        data,
+        meta,
       };
     },
-    staleTime: 3 * 60 * 1000, // 3 minutes
+    staleTime: 10 * 1000, // 10 seconds
     gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: true,
+  });
+};
+
+export const useGetVerificationRequests = (
+  params = {} as IUserFilterableFields,
+) => {
+  return useQuery({
+    queryKey: queryKeys.dashboard.verifyRequests(params),
+    queryFn: async () => {
+      const response = await UserApis.getAllVerificationRequests(params);
+
+      let data: IUser[] = [];
+      let meta = response?.meta;
+
+      if (Array.isArray(response?.data)) {
+        data = response.data;
+      } else if (Array.isArray((response?.data as any)?.data)) {
+        data = (response.data as any).data;
+        meta = (response.data as any)?.meta || meta;
+      } else if (Array.isArray(response)) {
+        data = response as any;
+      }
+
+      return {
+        data,
+        meta,
+      };
+    },
+    staleTime: 10 * 1000, // 10 seconds
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnMount: true,
   });
 };
 
@@ -49,6 +93,9 @@ export const useUpdateUserStatus = (id: string) => {
       queryClient.invalidateQueries({
         queryKey: ["dashboard", "users"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard", "verifyRequests"],
+      });
     },
   });
 };
@@ -68,6 +115,9 @@ export const useToggleUserVerification = (id: string) => {
       queryClient.invalidateQueries({
         queryKey: ["dashboard", "users"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard", "verifyRequests"],
+      });
     },
   });
 };
@@ -85,6 +135,9 @@ export const useDeleteUser = () => {
       // Refetch users list
       queryClient.invalidateQueries({
         queryKey: ["dashboard", "users"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard", "verifyRequests"],
       });
 
       // Refetch dashboard stats

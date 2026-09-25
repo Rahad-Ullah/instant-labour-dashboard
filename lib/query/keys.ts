@@ -33,6 +33,8 @@ export const queryKeys = {
       [...queryKeys.dashboard.all, "userStats", params] as const,
     users: (params?: IUserFilterableFields) =>
       [...queryKeys.dashboard.all, "users", params] as const,
+    verifyRequests: (params?: IUserFilterableFields) =>
+      [...queryKeys.dashboard.all, "verifyRequests", params] as const,
     detail: (id: string) => [...queryKeys.dashboard.all, "detail", id] as const,
     updateStatus: (id: string) =>
       [...queryKeys.dashboard.all, "updateStatus", id] as const,

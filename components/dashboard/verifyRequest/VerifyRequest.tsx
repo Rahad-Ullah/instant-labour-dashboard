@@ -22,7 +22,7 @@ import {
 
 import Swal from "sweetalert2";
 import VerifyDetailsModal from "@/modal/VerifyDetailsModal";
-import { useGetAllUser } from "@/lib/query/hooks";
+import { useGetVerificationRequests } from "@/lib/query/hooks";
 import { IUser, USER_ROLES } from "@/types/users";
 import { useDeleteUser } from "@/lib/query/hooks/dashboard/users";
 import { useState } from "react";
@@ -33,7 +33,7 @@ export default function VerifyReuest() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const limit = 10;
-  const { data, isLoading } = useGetAllUser({
+  const { data, isLoading } = useGetVerificationRequests({
     role: statusFilter === "all" ? undefined : statusFilter,
     page: currentPage,
     limit,
