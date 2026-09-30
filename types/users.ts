@@ -17,9 +17,9 @@ export type IWorkExperience = {
   endDate?: Date;
 };
 
-type IUserSubscriptions = {
+export type IUserSubscriptions = {
   isActive: boolean;
-  packageId?: string;
+  packageId?: string | any;
   packageType?: string;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
@@ -27,7 +27,7 @@ type IUserSubscriptions = {
   currentJobQuota?: number;
   currentBoostQuota?: number;
   currentBookingQuota?: number;
-  currentPeriodEnd?: number;
+  currentPeriodEnd?: number | string | Date;
   cancelAtPeriodEnd?: boolean;
 };
 

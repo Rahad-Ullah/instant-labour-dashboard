@@ -24,6 +24,7 @@ import { useState } from "react";
 import { useGetAllUser, useUpdateUserStatus } from "@/lib/query/hooks";
 import { USER_ROLES, USER_STATUS } from "@/types/users";
 import { getImageUrl } from "@/utils/image";
+import { formatSubscriptionDate, getSubscriptionPlanName } from "@/utils/subscription";
 import Pagination from "@/components/ui/pagination";
 import Swal from "sweetalert2";
 import { useDeleteUser } from "@/lib/query/hooks/dashboard/users";
@@ -40,6 +41,7 @@ export default function AllEmployeList() {
     limit,
     ...(statusFilter !== "all" && { status: statusFilter }),
   });
+  console.log('=========>', response)
 
   const { data, mutate: deleteUser } = useDeleteUser();
 
@@ -128,6 +130,7 @@ export default function AllEmployeList() {
                 <TableHead>Email</TableHead>
                 <TableHead>Contact</TableHead>
                 <TableHead>Location</TableHead>
+                <TableHead>Subscription</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="pl-8">Action</TableHead>
               </TableRow>
@@ -136,46 +139,85 @@ export default function AllEmployeList() {
               {employers.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="text-center py-8 text-gray-500"
                   >
                     No employers found
                   </TableCell>
                 </TableRow>
               ) : (
-                employers.map((employer, index) => (
-                  <TableRow key={employer._id}>
-                    <TableCell className="font-medium">
-                      {(currentPage - 1) * limit + index + 1}
-                    </TableCell>
+                employers.map((employer, index) => {
+                  const isSubActive = Boolean(
+                    employer.subscription?.isActive ||
+                      employer.subscription?.status === "active"
+                  );
+                  const planName = getSubscriptionPlanName(employer.subscription);
 
-                    <TableCell className="flex items-center gap-2">
-                      <Image
-                        src={getImageUrl(employer.profile)}
-                        alt="name"
-                        width={30}
-                        height={30}
-                        className=" rounded-full object-cover h-12 w-12"
-                        sizes="100vh"
-                      />
-                      {employer.name}
-                    </TableCell>
+                  return (
+                    <TableRow key={employer._id}>
+                      <TableCell className="font-medium">
+                        {(currentPage - 1) * limit + index + 1}
+                      </TableCell>
 
-                    <TableCell>{employer.email}</TableCell>
-                    <TableCell>{employer.phone}</TableCell>
-                    <TableCell>{employer.address as string}</TableCell>
-                    <TableCell>
-                      <Badge
-                        className={`${employer.status === USER_STATUS.ACTIVE
-                          ? "bg-green-500 "
-                          : "bg-[#E02121]"
+                      <TableCell className="flex items-center gap-2">
+                        <Image
+                          src={getImageUrl(employer.profile)}
+                          alt="name"
+                          width={30}
+                          height={30}
+                          className=" rounded-full object-cover h-12 w-12"
+                          sizes="100vh"
+                        />
+                        {employer.name}
+                      </TableCell>
+
+                      <TableCell>{employer.email}</TableCell>
+                      <TableCell>{employer.phone}</TableCell>
+                      <TableCell>{employer.address as string}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        {isSubActive ? (
+                          <div className="flex flex-col items-start gap-0.5">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                              {planName || "Active Plan"}
+                            </span>
+                            {employer.subscription?.currentPeriodEnd && (
+                              <span className="text-[11px] text-gray-500 pl-0.5">
+                                Exp:{" "}
+                                {formatSubscriptionDate(
+                                  employer.subscription.currentPeriodEnd
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        ) : planName || employer.subscription?.status ? (
+                          <div className="flex flex-col items-start gap-0.5">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                              {planName || "Plan"}
+                            </span>
+                            <span className="text-[10px] text-amber-600 pl-0.5 capitalize">
+                              {employer.subscription?.status || "Inactive"}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-normal bg-gray-100 text-gray-500 border border-gray-200">
+                            No Plan
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={`${
+                            employer.status === USER_STATUS.ACTIVE
+                              ? "bg-green-500 "
+                              : "bg-[#E02121]"
                           } w-20 text-white`}
-                      >
-                        {employer.status === USER_STATUS.ACTIVE
-                          ? "Active"
-                          : "Block"}
-                      </Badge>
-                    </TableCell>
+                        >
+                          {employer.status === USER_STATUS.ACTIVE
+                            ? "Active"
+                            : "Block"}
+                        </Badge>
+                      </TableCell>
                     <TableCell className="">
                       <div className="flex items-center gap-2">
                         <UserDetails
@@ -211,7 +253,8 @@ export default function AllEmployeList() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))
+                );
+              })
               )}
             </TableBody>
           </Table>
