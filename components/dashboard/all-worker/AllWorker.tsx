@@ -87,8 +87,40 @@ export default function AllWorker() {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
-  const handleStatusToggle = (workerId: string) => {
-    updateStatus(workerId);
+  const handleStatusToggle = (workerId: string, currentStatus: string) => {
+    const isBlocking = currentStatus === USER_STATUS.ACTIVE;
+    const action = isBlocking ? "block" : "unblock";
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to ${action} this worker?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: isBlocking ? "#d33" : "#3085d6",
+      cancelButtonColor: isBlocking ? "#3085d6" : "#d33",
+      confirmButtonText: `Yes, ${action} it!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateStatus(workerId, {
+          onSuccess: () => {
+            Swal.fire({
+              title: isBlocking ? "Blocked!" : "Unblocked!",
+              text: `Worker has been ${isBlocking ? "blocked" : "unblocked"} successfully.`,
+              icon: "success",
+            });
+          },
+          onError: (error: any) => {
+            Swal.fire({
+              title: "Error!",
+              text:
+                error?.response?.data?.message ||
+                `Failed to ${action} worker.`,
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
   };
 
   if (isLoading) {
@@ -191,12 +223,19 @@ export default function AllWorker() {
                       </span>
 
                       <span
-                        className={`bg-[#E6E6E6] p-1 rounded ${isUpdating
+                        className={`bg-[#E6E6E6] p-1 rounded ${
+                          isUpdating
                             ? "opacity-50 cursor-not-allowed"
                             : "cursor-pointer"
-                          }`}
+                        }`}
+                        title={
+                          worker.status === USER_STATUS.ACTIVE
+                            ? "Block worker"
+                            : "Unblock worker"
+                        }
                         onClick={() =>
-                          !isUpdating && handleStatusToggle(worker._id)
+                          !isUpdating &&
+                          handleStatusToggle(worker._id, worker.status)
                         }
                       >
                         {worker.status === USER_STATUS.ACTIVE ? (

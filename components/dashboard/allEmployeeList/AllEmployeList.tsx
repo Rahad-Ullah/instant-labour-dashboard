@@ -57,8 +57,40 @@ export default function AllEmployeList() {
     setCurrentPage(1); // Reset to first page when filter changes
   };
 
-  const handleStatusToggle = (employerId: string) => {
-    updateStatus(employerId);
+  const handleStatusToggle = (employerId: string, currentStatus: string) => {
+    const isBlocking = currentStatus === USER_STATUS.ACTIVE;
+    const action = isBlocking ? "block" : "unblock";
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to ${action} this employer?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: isBlocking ? "#d33" : "#3085d6",
+      cancelButtonColor: isBlocking ? "#3085d6" : "#d33",
+      confirmButtonText: `Yes, ${action} it!`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        updateStatus(employerId, {
+          onSuccess: () => {
+            Swal.fire({
+              title: isBlocking ? "Blocked!" : "Unblocked!",
+              text: `Employer has been ${isBlocking ? "blocked" : "unblocked"} successfully.`,
+              icon: "success",
+            });
+          },
+          onError: (error: any) => {
+            Swal.fire({
+              title: "Error!",
+              text:
+                error?.response?.data?.message ||
+                `Failed to ${action} employer.`,
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
   };
   const handleDelete = (id: string) => {
     Swal.fire({
@@ -230,12 +262,19 @@ export default function AllEmployeList() {
                         />
 
                         <span
-                          className={`bg-[#E6E6E6] p-1 rounded ${isUpdating
-                            ? "opacity-50 cursor-not-allowed"
-                            : "cursor-pointer"
-                            }`}
+                          className={`bg-[#E6E6E6] p-1 rounded ${
+                            isUpdating
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
+                          }`}
+                          title={
+                            employer.status === USER_STATUS.ACTIVE
+                              ? "Block employer"
+                              : "Unblock employer"
+                          }
                           onClick={() =>
-                            !isUpdating && handleStatusToggle(employer._id)
+                            !isUpdating &&
+                            handleStatusToggle(employer._id, employer.status)
                           }
                         >
                           {employer.status === USER_STATUS.ACTIVE ? (
