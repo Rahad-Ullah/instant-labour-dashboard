@@ -20,11 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import Swal from "sweetalert2";
 import VerifyDetailsModal from "@/modal/VerifyDetailsModal";
 import { useGetVerificationRequests } from "@/lib/query/hooks";
 import { IUser, USER_ROLES } from "@/types/users";
-import { useDeleteUser } from "@/lib/query/hooks/dashboard/users";
 import { useState } from "react";
 import Pagination from "@/components/ui/pagination";
 
@@ -33,42 +31,13 @@ export default function VerifyReuest() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const limit = 10;
-  const { data, isLoading } = useGetVerificationRequests({
+  const { data } = useGetVerificationRequests({
     role: statusFilter === "all" ? undefined : statusFilter,
     page: currentPage,
     limit,
   });
 
   const { meta, data: users } = data || {};
-
-  const { mutate: deleteUser } = useDeleteUser();
-
-  const handleDelete = (id: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to be delete this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteUser(
-          { _id: id },
-          {
-            onSuccess: () => {
-              Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success",
-              });
-            },
-          },
-        );
-      }
-    });
-  };
 
   const handleStatusFilterChange = (value: string) => {
     setStatusFilter(value);
@@ -144,13 +113,6 @@ export default function VerifyReuest() {
                           </span>
                         }
                       />
-
-                      <span
-                        className="bg-red-600 p-1 rounded cursor-pointer"
-                        onClick={() => handleDelete(user?._id)}
-                      >
-                        <Trash2 className=" text-white" />
-                      </span>
                     </TableCell>
                   </TableRow>
                 ))}
