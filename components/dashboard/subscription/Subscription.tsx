@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import SubscriptionModal from "./SubscriptionModal";
+import SubscriptionDelete from "./SubscriptionDelete";
 import PromotionOffer from "./PromotionOffer";
 import {
   useGetGlobalCoupon,
@@ -18,7 +19,7 @@ export default function Subscription() {
         {packages &&
           packages.length > 0 &&
           packages?.map((plan: IPackage, index: number) => (
-            <div key={index} className="flex flex-col">
+            <div key={plan._id || index} className="flex flex-col">
               {/* header */}
               <h1 className="bg-[#B0CBF4] py-2 text-center font-bold rounded-md w-full">
                 {plan.type}
@@ -61,21 +62,27 @@ export default function Subscription() {
                 {/* description */}
                 <div className="px-5 pb-6 text-center">{plan.description}</div>
 
-                {/* button — always bottom */}
-                <div className="mt-auto flex justify-center mb-10">
+                {/* buttons — always bottom */}
+                <div className="mt-auto flex items-center justify-center gap-3 mb-10 px-4 relative z-10">
                   <SubscriptionModal
                     packageData={plan}
                     trigger={
-                      <button className="bg-[#0057DC] px-12 rounded-md text-white font-medium py-3">
+                      <button className="bg-[#0057DC] hover:bg-[#0047b3] px-6 rounded-md text-white font-medium py-3 cursor-pointer transition-colors">
                         Edit Now
                       </button>
                     }
                   />
+                  {plan._id && (
+                    <SubscriptionDelete
+                      id={plan._id}
+                      packageName={plan.type}
+                    />
+                  )}
                 </div>
 
                 {/* background decoration */}
-                <div className="bg-[#B0CBF4] w-28 h-28 rotate-45 absolute -bottom-1 -left-1 -translate-x-1/2 translate-y-1/2"></div>
-                <div className="bg-[#B0CBF4] w-28 h-28 rotate-45 absolute -bottom-1 -right-1 translate-x-1/2 translate-y-1/2"></div>
+                <div className="bg-[#B0CBF4] w-28 h-28 rotate-45 absolute -bottom-1 -left-1 -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
+                <div className="bg-[#B0CBF4] w-28 h-28 rotate-45 absolute -bottom-1 -right-1 translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
               </div>
             </div>
           ))}

@@ -116,3 +116,22 @@ export const useDeleteGlobalCoupon = () => {
     },
   });
 };
+
+export const useDeletePackage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: queryKeys.dashboard.package(),
+    mutationFn: async (id: string) => {
+      return await PackageApi.deletePackage(id);
+    },
+    onSuccess: (res) => {
+      toast.success(res.message || "Successfully deleted package");
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.package() });
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message || error?.message || "Failed to delete package"
+      );
+    },
+  });
+};

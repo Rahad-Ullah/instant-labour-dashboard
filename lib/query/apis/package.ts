@@ -31,6 +31,11 @@ const getGlobalCoupon = async () => {
   return res.data;
 }
 
+const deletePackage = async (id: string) => {
+  const res = await api.delete(`/package/${id}`);
+  return res.data;
+};
+
 const deleteGlobalCoupon = async ({ id }: { id: string }) => {
   const res = await api.delete(`/package/coupon/${id}`);
   return res.data;
@@ -40,6 +45,7 @@ export const PackageApi = {
   createPackage,
   getPackages,
   updatePackage,
+  deletePackage,
   togglePackageStatus,
   applyGlobalCuopon,
   getGlobalCoupon,
