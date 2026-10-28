@@ -68,7 +68,7 @@ export default function Mission() {
           action={
             <AboutUsEdit
               trigger={
-                <Button className="gap-2 bg-[#0057DC] hover:bg-[#0047b3] cursor-pointer">
+                <Button className="gap-2 cursor-pointer">
                   <Plus className="w-4 h-4" />
                   Create Our Mission Section
                 </Button>
