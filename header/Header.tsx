@@ -1,83 +1,88 @@
 "use client";
+
+import React, { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useGetProfile } from "@/lib/query/hooks";
 import { getImageUrl } from "@/utils/image";
 import Image from "next/image";
-import { useGetFaq } from "@/lib/query/hooks/dashboard/public";
 
-const auth = [
-  { path: "/login" },
-  { path: "/forgot-password" },
-  { path: "/new-password" },
-  { path: "/verify-otp" },
-];
-
-const path = [
-  // { path: "/", label: "Dashboard" },
-  // { path: "/all-employe-list", label: "All Employer" },
-  // { path: "/all-worker", label: "All Worker" },
-  // { path: "/all-category", label: "All Category" },
-  // { path: "/home-page", label: "Home Page" },
-  // { path: "/about-us", label: "About Us" },
-  // { path: "/contact-us", label: "Contact Us" },
-  // { path: "/credit-list", label: "Credit List" },
-  // { path: "/change-password", label: "Change Password" },
-  // { path: "/terms-condition", label: "Terms & Condition" },
-  // { path: "/our-clients", label: "Our Cllients" },
-  // { path: "/support", label: "Support" },
-  // { path: "/faq", label: "FAQ" },
-  // { path: "/verify-request", label: "Verify Request" },
-  { path: "/profile", label: "Profile" },
-  // { path: "/notification", label: "Notification" },
+const authRoutes = [
+  "/login",
+  "/forgot-password",
+  "/new-password",
+  "/verify-otp",
 ];
 
 export default function Header() {
   const pathname = usePathname();
-  const isAuthPage = auth.some((item) => item.path === pathname);
+  const isAuthPage = authRoutes.includes(pathname);
 
   // Fetch admin profile
   const { data: profile } = useGetProfile();
-  const { data: faqData } = useGetFaq();
+  const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [profile?.profile]);
+
+  if (isAuthPage) return null;
+
+  const avatarSrc =
+    !imgError && profile?.profile
+      ? getImageUrl(profile.profile)
+      : "/user-avatar.png";
 
   return (
-    <>
-      {!isAuthPage && (
-        <section className="flex items-center justify-end bg-white text-black p-4 z-50">
-          {/* <p>{activePath?.label}</p> */}
-          <div className="flex items-center gap-4">
-            {/* <div className="relative bg-gray-100 p-2 rounded-full">
-              <Link href="/notification">
-                <Bell className="w-5 h-5 text-black" />
-                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold">
-                  {faqData?.length}
-                </span>
-              </Link>
-            </div> */}
+    <header className="flex items-center justify-between bg-white border-b border-gray-200/80 px-8 h-[68px] z-50">
+      {/* Left side greeting / status */}
+      <div className="hidden md:flex items-center gap-2 text-sm text-gray-500">
+        <span>Welcome back,</span>
+        <span className="font-semibold text-gray-800">
+          {profile?.name || "Admin"}
+        </span>
+      </div>
 
-            <Link href="/profile">
-              <div className="flex items-center gap-2">
-                <Image
-                  src={
-                    profile?.profile
-                      ? getImageUrl(profile.profile)
-                      : "https://i.ibb.co.com/xJdQCTG/download.jpg"
-                  }
-                  alt="Admin Avatar"
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <div className="text-sm leading-tight ">
-                  <p className="font-medium">{profile?.name || "Admin"}</p>
-                  <p className=" text-xs">{profile?.role || "Admin"}</p>
-                </div>
-              </div>
-            </Link>
+      {/* Right side actions */}
+      <div className="flex items-center gap-4 ml-auto">
+        {/* Notification Bell */}
+        <Link
+          href="/notification"
+          className="relative p-2.5 text-gray-500 hover:text-blue-600 hover:bg-gray-100/80 rounded-full transition-colors"
+          title="Notifications"
+        >
+          <Bell className="w-5 h-5" />
+        </Link>
+
+        {/* Subtle divider */}
+        <div className="h-6 w-px bg-gray-200" />
+
+        {/* Profile pill */}
+        <Link
+          href="/profile"
+          className="flex items-center gap-3 py-1 px-2 rounded-xl hover:bg-gray-100/70 transition-colors group cursor-pointer"
+        >
+          <div className="relative w-9 h-9 rounded-full overflow-hidden bg-gray-100 ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
+            <Image
+              src={avatarSrc}
+              alt={profile?.name || "Admin Avatar"}
+              fill
+              sizes="36px"
+              className="object-cover"
+              onError={() => setImgError(true)}
+            />
           </div>
-        </section>
-      )}
-    </>
+          <div className="text-left leading-tight hidden sm:block">
+            <p className="text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+              {profile?.name || "Admin"}
+            </p>
+            <p className="text-xs text-gray-400 capitalize font-medium">
+              {profile?.role || "Administrator"}
+            </p>
+          </div>
+        </Link>
+      </div>
+    </header>
   );
 }
