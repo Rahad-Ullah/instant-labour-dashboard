@@ -3,6 +3,8 @@ import HeroSectionModal from "../modal/HeroSection";
 import { getImageUrl } from "@/utils/image";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
+import EmptyState from "@/components/ui/empty-state";
+import { Sparkles } from "lucide-react";
 
 export default function HeroSection() {
   const { data: section, isLoading } = useGetSection(SECTION_TYPES.HERO);
@@ -49,18 +51,13 @@ export default function HeroSection() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Hero section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the hero section
-          </p>
-
-          <div>
-            <HeroSectionModal mode="create" contents={section} />
-          </div>
-        </div>
+        <EmptyState
+          variant="default"
+          icon={Sparkles}
+          title="Hero Section Not Created Yet"
+          description="The main landing page hero section is currently empty. Click below to add title, description, and hero banner images."
+          action={<HeroSectionModal mode="create" contents={section} />}
+        />
       )}
     </section>
   );

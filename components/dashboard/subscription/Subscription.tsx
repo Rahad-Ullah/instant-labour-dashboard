@@ -8,6 +8,8 @@ import {
   useGetPackages,
 } from "@/lib/query/hooks/dashboard/package";
 import { IPackage } from "@/types/others";
+import { Package, Plus } from "lucide-react";
+import EmptyState from "@/components/ui/empty-state";
 
 export default function Subscription() {
   const { data: packages, isLoading } = useGetPackages();
@@ -15,10 +17,45 @@ export default function Subscription() {
 
   return (
     <section>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 mt-4 px-6">
-        {packages &&
-          packages.length > 0 &&
-          packages?.map((plan: IPackage, index: number) => (
+      {isLoading ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 mt-4 px-6">
+          {[1, 2, 3].map((item) => (
+            <div key={item} className="flex flex-col animate-pulse">
+              <div className="h-10 bg-slate-200 rounded-md w-full mb-4" />
+              <div className="bg-white rounded-2xl p-6 border border-slate-100 flex flex-col h-80">
+                <div className="h-16 bg-slate-100 rounded-xl mb-6" />
+                <div className="space-y-3 flex-1">
+                  <div className="h-4 bg-slate-100 rounded w-3/4" />
+                  <div className="h-4 bg-slate-100 rounded w-1/2" />
+                  <div className="h-4 bg-slate-100 rounded w-2/3" />
+                </div>
+                <div className="h-10 bg-slate-200 rounded-md mt-auto" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !packages || packages.length === 0 ? (
+        <div className="mt-6 px-6">
+          <EmptyState
+            icon={Package}
+            title="No Subscription Packages Found"
+            description="There are currently no subscription packages available. Create your first package to start offering subscription plans to employers."
+            action={
+              <SubscriptionModal
+                header="Add Package"
+                trigger={
+                  <button className="inline-flex items-center gap-2 bg-[#0057DC] hover:bg-[#0047b3] text-white px-5 py-2.5 rounded-lg text-sm font-medium cursor-pointer transition-colors shadow-xs">
+                    <Plus className="w-4 h-4" />
+                    Create First Package
+                  </button>
+                }
+              />
+            }
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-10 mt-4 px-6">
+          {packages.map((plan: IPackage, index: number) => (
             <div key={plan._id || index} className="flex flex-col">
               {/* header */}
               <h1 className="bg-[#B0CBF4] py-2 text-center font-bold rounded-md w-full">
@@ -86,7 +123,8 @@ export default function Subscription() {
               </div>
             </div>
           ))}
-      </div>
+        </div>
+      )}
       {/* promotion offer */}
       <PromotionOffer coupon={coupon} />
     </section>

@@ -28,6 +28,8 @@ import { formatSubscriptionDate, getSubscriptionPlanName } from "@/utils/subscri
 import Pagination from "@/components/ui/pagination";
 import Swal from "sweetalert2";
 import { useDeleteUser } from "@/lib/query/hooks/dashboard/users";
+import { EmptyTableRow } from "@/components/ui/empty-state";
+import { Users } from "lucide-react";
 
 export default function AllEmployeList() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -168,15 +170,45 @@ export default function AllEmployeList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employers.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={8}
-                    className="text-center py-8 text-gray-500"
-                  >
-                    No employers found
-                  </TableCell>
-                </TableRow>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index} className="animate-pulse">
+                    <TableCell><div className="h-4 w-6 bg-slate-200 rounded" /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="h-10 w-10 bg-slate-200 rounded-full" />
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                      </div>
+                    </TableCell>
+                    <TableCell><div className="h-4 w-32 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-24 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-28 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-5 w-20 bg-slate-200 rounded-full" /></TableCell>
+                    <TableCell><div className="h-6 w-16 bg-slate-200 rounded-full" /></TableCell>
+                    <TableCell><div className="h-7 w-20 bg-slate-200 rounded" /></TableCell>
+                  </TableRow>
+                ))
+              ) : employers.length === 0 ? (
+                <EmptyTableRow
+                  colSpan={8}
+                  icon={Users}
+                  title="No Employers Found"
+                  description={
+                    statusFilter !== "all"
+                      ? `No employers found with "${statusFilter}" status.`
+                      : "There are currently no registered employers on the platform."
+                  }
+                  action={
+                    statusFilter !== "all" ? (
+                      <button
+                        onClick={() => handleStatusFilterChange("all")}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-700 underline cursor-pointer"
+                      >
+                        Clear status filter
+                      </button>
+                    ) : undefined
+                  }
+                />
               ) : (
                 employers.map((employer, index) => {
                   const isSubActive = Boolean(

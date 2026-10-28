@@ -6,6 +6,8 @@ import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
 import { getImageUrl } from "@/utils/image";
 import { Button } from "@/components/ui/button";
+import EmptyState from "@/components/ui/empty-state";
+import { MapPin } from "lucide-react";
 
 export default function WhatWeDo() {
   const { data: section, isLoading } = useGetSection(
@@ -60,17 +62,15 @@ export default function WhatWeDo() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Where We Operate section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the Where We Operate section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={MapPin}
+          title="Where We Operate Section Not Created Yet"
+          description="The coverage areas and operating locations section is currently empty. Click below to add operating details."
+          action={
             <AboutUsEdit
               trigger={
-                <Button className="gap-2">
+                <Button className="gap-2 cursor-pointer">
                   <Plus className="w-4 h-4" />
                   Create Where We Operate Section
                 </Button>
@@ -79,8 +79,8 @@ export default function WhatWeDo() {
               section={section}
               sectionType={SECTION_TYPES.WHERE_WE_OPERATE}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </section>
   );

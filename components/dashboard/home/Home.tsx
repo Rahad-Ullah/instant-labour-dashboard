@@ -17,6 +17,8 @@ import HowWorker from "./selectPage/HowWorker";
 import HowWorkEmployee from "./selectPage/HowWorkEmployee";
 import JobResponses from "./selectPage/JobResponses";
 import OurClients from "../ourClients/OurClients";
+import EmptyState from "@/components/ui/empty-state";
+import { LayoutTemplate } from "lucide-react";
 
 const title = [
   { id: 1, value: "Hero Section" },
@@ -49,22 +51,18 @@ export default function Home() {
   }, [selectedValue]);
   return (
     <section className="max-w-7xl mx-auto">
-      <div className="flex items-center justify-between bg-[#F6F6F6] py-5 rounded-md">
-        <h2 className="text-3xl font-medium text-gray-800">
-          Please select a title to edit or create
+      <div className="flex items-center justify-between bg-[#F6F6F6] py-5 px-6 rounded-md">
+        <h2 className="text-xl md:text-2xl font-medium text-gray-800">
+          Landing Page Content Manager
         </h2>
 
-        <div className="flex items-center space-x-5">
-          {/* <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 cursor-pointer">
-            <Edit className="w-4 h-4" />
-          </button> */}
-
+        <div className="flex items-center space-x-5 min-w-[240px]">
           <Select
             onValueChange={(value) => setSelectedValue(value)}
             value={selectedValue}
           >
-            <SelectTrigger className="w-full cursor-pointer">
-              <SelectValue placeholder="Select Title" />
+            <SelectTrigger className="w-full cursor-pointer bg-white">
+              <SelectValue placeholder="Select Section" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -78,6 +76,19 @@ export default function Home() {
           </Select>
         </div>
       </div>
+
+      {/* When no section is selected */}
+      {!selectedValue && (
+        <div className="mt-8">
+          <EmptyState
+            variant="dashed"
+            icon={LayoutTemplate}
+            title="No Section Selected"
+            description="Choose a landing page section from the dropdown above to view, create, or customize its content."
+          />
+        </div>
+      )}
+
       {/* Modal rendered when selected */}
       {selectedValue === "Hero Section" && <HeroSection />}
       {selectedValue === "How it work(employer)" && <HowWorkEmployee />}

@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import { useMemo, useState } from "react";
+import { BarChart2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -109,8 +110,12 @@ export default function Chart() {
         )}
 
         {!isLoading && !hasData && (
-          <div className="absolute inset-0 flex items-center justify-center text-gray-400 z-0">
-            No subscription data for this period
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 z-10 text-slate-500 rounded-lg">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mb-2">
+              <BarChart2 className="w-5 h-5 text-slate-400" />
+            </div>
+            <p className="text-sm font-medium text-slate-600">No subscription records</p>
+            <p className="text-xs text-slate-400">No activity for the selected month and year</p>
           </div>
         )}
 

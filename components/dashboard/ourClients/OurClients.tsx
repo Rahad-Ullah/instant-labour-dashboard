@@ -1,5 +1,3 @@
-// components/Testimonials.tsx
-
 "use client";
 
 import Image from "next/image";
@@ -7,6 +5,8 @@ import { EditClientSection } from "./Edit";
 import { useGetClientReview } from "@/lib/query/hooks/dashboard/pageContent";
 import { IClientreview, SECTION_TYPES } from "@/types/others";
 import { getImageUrl } from "@/utils/image";
+import EmptyState from "@/components/ui/empty-state";
+import { MessageSquareQuote } from "lucide-react";
 
 export default function OurClients() {
   const { data: clientReviews = [], isLoading } = useGetClientReview(
@@ -96,18 +96,19 @@ export default function OurClients() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Client Say is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the client say section
-          </p>
-
-          <EditClientSection
-            mode="create"
-            clientReview={clientReviews}
-            sectionType={SECTION_TYPES.CLIENT_SAY}
+        <div className="py-8">
+          <EmptyState
+            variant="default"
+            icon={MessageSquareQuote}
+            title="Client Reviews Not Created Yet"
+            description="No client testimonials or reviews have been published yet. Click below to add your first client review."
+            action={
+              <EditClientSection
+                mode="create"
+                clientReview={clientReviews}
+                sectionType={SECTION_TYPES.CLIENT_SAY}
+              />
+            }
           />
         </div>
       )}

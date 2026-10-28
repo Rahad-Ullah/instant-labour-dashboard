@@ -4,6 +4,8 @@ import AboutHeroModal from "../modal/AboutHeroModal";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
 import { getImageUrl } from "@/utils/image";
+import EmptyState from "@/components/ui/empty-state";
+import { Sparkles } from "lucide-react";
 
 export default function AboutHeroSection() {
   const { data: section, isLoading } = useGetSection(SECTION_TYPES.ABOUT_HERO);
@@ -52,18 +54,13 @@ export default function AboutHeroSection() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            About hero section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the about hero section
-          </p>
-
-          <div>
-            <AboutHeroModal mode="create" contents={section} />
-          </div>
-        </div>
+        <EmptyState
+          variant="default"
+          icon={Sparkles}
+          title="About Hero Section Not Created Yet"
+          description="The About Us hero banner is currently empty. Click below to add title, description, and images."
+          action={<AboutHeroModal mode="create" contents={section} />}
+        />
       )}
     </section>
   );

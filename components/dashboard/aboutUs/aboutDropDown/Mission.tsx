@@ -6,6 +6,8 @@ import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
 import { getImageUrl } from "@/utils/image";
 import { Button } from "@/components/ui/button";
+import EmptyState from "@/components/ui/empty-state";
+import { Target } from "lucide-react";
 
 export default function Mission() {
   const { data: section, isLoading } = useGetSection(SECTION_TYPES.OUR_MISSION);
@@ -58,17 +60,15 @@ export default function Mission() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Our Mission section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the Our Mission section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={Target}
+          title="Our Mission Section Not Created Yet"
+          description="The company mission statement is currently empty. Click below to add mission content."
+          action={
             <AboutUsEdit
               trigger={
-                <Button className="gap-2">
+                <Button className="gap-2 bg-[#0057DC] hover:bg-[#0047b3] cursor-pointer">
                   <Plus className="w-4 h-4" />
                   Create Our Mission Section
                 </Button>
@@ -77,8 +77,8 @@ export default function Mission() {
               section={section}
               sectionType={SECTION_TYPES.OUR_MISSION}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </section>
   );

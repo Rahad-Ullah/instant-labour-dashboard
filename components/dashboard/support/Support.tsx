@@ -11,14 +11,6 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { DialogDemo } from "./Message";
 import Swal from "sweetalert2";
@@ -29,6 +21,8 @@ import {
 import { IContact } from "@/types/others";
 import { useState } from "react";
 import { USER_ROLES } from "@/types/users";
+import { EmptyTableRow } from "@/components/ui/empty-state";
+import { Inbox } from "lucide-react";
 
 export default function Support() {
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -36,13 +30,11 @@ export default function Support() {
 
   const limit = 10;
 
-  const { data: supportMessages } = useGetSupportMessage({
+  const { data: supportMessages, isLoading } = useGetSupportMessage({
     role: roleFilter === "all" ? undefined : roleFilter,
     page: currentPage,
     limit,
   });
-
-  console.log("supportMessages", supportMessages);
 
   const { mutate: deleteMessageMutation } = useDeleteSupportMessage();
 
@@ -77,20 +69,6 @@ export default function Support() {
       <div className="bg-[#f9f9f9] p-6 rounded-lg">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Support</h2>
-          {/* <div>
-            <Select value={roleFilter} onValueChange={handleStatusFilterChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select item" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value={USER_ROLES.WORKER}>Worker</SelectItem>
-                  <SelectItem value={USER_ROLES.EMPLOYER}>Employer</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div> */}
         </div>
         <div className="w-full max-w-[calc(100vw-330px)] overflow-x-auto">
           <Table className="">
@@ -100,17 +78,35 @@ export default function Support() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Contact</TableHead>
-                {/* <TableHead>Location</TableHead> */}
                 <TableHead>Status</TableHead>
                 <TableHead className="pl-8">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {supportMessages &&
-                supportMessages?.length > 0 &&
-                supportMessages?.map((message: IContact, index: number) => (
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index} className="animate-pulse">
+                    <TableCell><div className="h-4 w-6 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-28 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-36 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-24 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-6 w-20 bg-slate-200 rounded-full" /></TableCell>
+                    <TableCell><div className="h-7 w-16 bg-slate-200 rounded" /></TableCell>
+                  </TableRow>
+                ))
+              ) : !supportMessages || supportMessages.length === 0 ? (
+                <EmptyTableRow
+                  colSpan={6}
+                  icon={Inbox}
+                  title="No Support Messages Found"
+                  description="There are currently no customer inquiries or support tickets submitted."
+                />
+              ) : (
+                supportMessages.map((message: IContact, index: number) => (
                   <TableRow key={message._id}>
-                    <TableCell className="font-medium">0{index + 1}</TableCell>
+                    <TableCell className="font-medium">
+                      {String((currentPage - 1) * limit + index + 1).padStart(2, "0")}
+                    </TableCell>
 
                     <TableCell className="flex items-center gap-2">
                       {message.name}
@@ -118,7 +114,6 @@ export default function Support() {
 
                     <TableCell>{message.email}</TableCell>
                     <TableCell>{message.phone}</TableCell>
-                    {/* <TableCell>{message.location}</TableCell> */}
                     <TableCell>
                       <Badge
                         className={
@@ -140,7 +135,8 @@ export default function Support() {
                       </span>
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

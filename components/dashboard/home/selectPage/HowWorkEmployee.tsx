@@ -1,6 +1,8 @@
 import { PAGE_SLUGS, SECTION_TYPES } from "@/types/others";
 import WorkEdit from "../modal/WorkEdit";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
+import EmptyState from "@/components/ui/empty-state";
+import { Briefcase } from "lucide-react";
 
 export default function HowWorkEmployee() {
   const { data: section, isLoading } = useGetSection(
@@ -63,21 +65,19 @@ export default function HowWorkEmployee() {
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            How It Works section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the how it works section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={Briefcase}
+          title="How It Works (Employer) Not Created Yet"
+          description="The employer steps section is not configured yet. Click below to add the steps for hiring workers."
+          action={
             <WorkEdit
               mode="create"
               pageSlug={PAGE_SLUGS.HOME}
               sectionType={SECTION_TYPES.HOW_IT_WORKS}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </div>
   );

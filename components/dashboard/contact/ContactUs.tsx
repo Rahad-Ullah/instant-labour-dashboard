@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
-import { Edit, Plus } from "lucide-react";
-import ContactUsForm from "@/modal/ContactUsModal";
+import { Edit, Plus, Mail } from "lucide-react";
 
-import { SECTION_TYPES, PAGE_SLUGS } from "@/types/others";
+import { SECTION_TYPES } from "@/types/others";
 import ContactEdit from "./ContactEdit";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { getImageUrl } from "@/utils/image";
+import EmptyState from "@/components/ui/empty-state";
 
 export default function ContactUs() {
   const { data: section, isLoading } = useGetSection(SECTION_TYPES.CONTACT_US);
@@ -83,33 +83,25 @@ export default function ContactUs() {
               />
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-            <h2 className="text-lg font-medium text-gray-700 mb-2">
-              Contact section is not created yet
-            </h2>
-            <p className="text-sm text-gray-500 mb-6">
-              Click above to create the contact section
-            </p>
-            {/* <div className="text-gray-400">
-              <div className="grid grid-cols-2 gap-14 opacity-50">
-                <div>
-                  <h1 className="font-semibold text-3xl 2xl:text-5xl my-3 leading-10 2xl:leading-16 text-gray-300">
-                    Let's Connect and Build Something Great.
-                  </h1>
-                  <p className="text-gray-300 mt-6">
-                    We make it simple for employers and skilled professionals to
-                    connect, collaborate, and complete projects — all in one trusted
-                    platform
-                  </p>
-                </div>
-                <div className="bg-gray-100 rounded-lg w-full h-64 flex items-center justify-center">
-                  <p className="text-gray-400">Image placeholder</p>
-                </div>
-              </div>
-            </div> */}
-          </div>
-        )}
+      ) : (
+        <EmptyState
+          variant="default"
+          icon={Mail}
+          title="Contact Section Not Created Yet"
+          description="The contact landing section has not been configured yet. Use the create button in the top right to set up contact information."
+          action={
+            <ContactEdit
+              mode="create"
+              trigger={
+                <button className="px-4 py-2 bg-[#0057DC] hover:bg-[#0047b3] text-white rounded-lg transition-colors flex items-center gap-2 text-sm font-medium shadow-xs cursor-pointer">
+                  <Plus className="w-4 h-4" />
+                  Create Contact Section
+                </button>
+              }
+            />
+          }
+        />
+      )}
       </section>
     </section>
   );

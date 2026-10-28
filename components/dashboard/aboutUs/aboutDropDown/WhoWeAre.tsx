@@ -6,6 +6,8 @@ import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
 import { getImageUrl } from "@/utils/image";
 import { Button } from "@/components/ui/button";
+import EmptyState from "@/components/ui/empty-state";
+import { Users } from "lucide-react";
 
 export default function WhoWeAre() {
   const { data: section, isLoading } = useGetSection(SECTION_TYPES.WHO_WE_ARE);
@@ -58,17 +60,15 @@ export default function WhoWeAre() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full min-h-[350px]">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Who We Are section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the Who We Are section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={Users}
+          title="Who We Are Section Not Created Yet"
+          description="The company introduction and background section is currently empty. Click below to add details."
+          action={
             <AboutUsEdit
               trigger={
-                <Button className="gap-2">
+                <Button className="gap-2 bg-[#0057DC] hover:bg-[#0047b3] cursor-pointer">
                   <Plus className="w-4 h-4" />
                   Create Who We Are Section
                 </Button>
@@ -77,8 +77,8 @@ export default function WhoWeAre() {
               section={section}
               sectionType={SECTION_TYPES.WHO_WE_ARE}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </section>
   );

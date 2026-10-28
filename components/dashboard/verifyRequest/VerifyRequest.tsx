@@ -25,13 +25,15 @@ import { useGetVerificationRequests } from "@/lib/query/hooks";
 import { IUser, USER_ROLES } from "@/types/users";
 import { useState } from "react";
 import Pagination from "@/components/ui/pagination";
+import { EmptyTableRow } from "@/components/ui/empty-state";
+import { UserCheck } from "lucide-react";
 
 export default function VerifyReuest() {
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const limit = 10;
-  const { data } = useGetVerificationRequests({
+  const { data, isLoading } = useGetVerificationRequests({
     role: statusFilter === "all" ? undefined : statusFilter,
     page: currentPage,
     limit,
@@ -82,10 +84,45 @@ export default function VerifyReuest() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users &&
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index} className="animate-pulse">
+                    <TableCell><div className="h-4 w-6 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-28 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-36 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-24 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-32 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-6 w-20 bg-slate-200 rounded-full" /></TableCell>
+                    <TableCell className="pl-10"><div className="h-7 w-7 bg-slate-200 rounded" /></TableCell>
+                  </TableRow>
+                ))
+              ) : !users || users.length === 0 ? (
+                <EmptyTableRow
+                  colSpan={7}
+                  icon={UserCheck}
+                  title="No Verification Requests Found"
+                  description={
+                    statusFilter !== "all"
+                      ? `No verification requests found for the selected "${statusFilter}" role.`
+                      : "There are currently no verification requests pending review."
+                  }
+                  action={
+                    statusFilter !== "all" ? (
+                      <button
+                        onClick={() => handleStatusFilterChange("all")}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-700 underline cursor-pointer"
+                      >
+                        Clear role filter
+                      </button>
+                    ) : undefined
+                  }
+                />
+              ) : (
                 users.map((user: IUser, index: number) => (
                   <TableRow key={user._id}>
-                    <TableCell className="font-medium">0{index + 1}</TableCell>
+                    <TableCell className="font-medium">
+                      {String((currentPage - 1) * limit + index + 1).padStart(2, "0")}
+                    </TableCell>
 
                     <TableCell className="flex items-center gap-2">
                       {user.name}
@@ -115,7 +152,8 @@ export default function VerifyReuest() {
                       />
                     </TableCell>
                   </TableRow>
-                ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

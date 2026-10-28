@@ -1,6 +1,8 @@
 import { PAGE_SLUGS, SECTION_TYPES } from "@/types/others";
 import WorkEdit from "../modal/WorkEdit";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
+import EmptyState from "@/components/ui/empty-state";
+import { HardHat } from "lucide-react";
 
 // Default data structure
 const defaultData = [
@@ -78,21 +80,19 @@ export default function HowWorker() {
           </div>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            How It Works section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the how it works worker section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={HardHat}
+          title="How It Works (Worker) Not Created Yet"
+          description="The worker steps section is not configured yet. Click below to add the onboarding steps for workers."
+          action={
             <WorkEdit
               mode="create"
               pageSlug={PAGE_SLUGS.HOME}
               sectionType={SECTION_TYPES.HOW_IT_WORKS_WORKER}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </div>
   );

@@ -1,8 +1,9 @@
-import { Check, Edit } from "lucide-react";
+import { Check, Edit, ShieldCheck } from "lucide-react";
 import React from "react";
 import LabourModal from "../modal/Labour";
 import { useGetSection } from "@/lib/query/hooks/dashboard/pageContent";
 import { SECTION_TYPES } from "@/types/others";
+import EmptyState from "@/components/ui/empty-state";
 
 // Default texts
 const defaultTexts = [
@@ -68,20 +69,18 @@ export default function Labour() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center h-full">
-          <h2 className="text-lg font-medium text-gray-700 mb-2">
-            Why Instant Labour section is not created yet
-          </h2>
-          <p className="text-sm text-gray-500 mb-6">
-            Click below to create the section
-          </p>
-          <div>
+        <EmptyState
+          variant="default"
+          icon={ShieldCheck}
+          title="Why Instant Labour Not Created Yet"
+          description="The key advantages and features section is not configured yet. Click below to add your bullet points."
+          action={
             <LabourModal
               mode="create"
               content={section}
             />
-          </div>
-        </div>
+          }
+        />
       )}
     </div>
   );

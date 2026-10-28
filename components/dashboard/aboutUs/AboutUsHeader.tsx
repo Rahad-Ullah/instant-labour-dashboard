@@ -16,6 +16,8 @@ import Mission from "./aboutDropDown/Mission";
 import WhatWeDo from "./aboutDropDown/WhatWeDo";
 import OurVision from "./aboutDropDown/OurVision";
 import WhyChoose from "./aboutDropDown/WhyChoose";
+import EmptyState from "@/components/ui/empty-state";
+import { FileText } from "lucide-react";
 
 const title = [
   { id: 1, value: "Hero Section" },
@@ -31,18 +33,18 @@ export default function AboutUsHeader() {
   return (
     <>
       <section className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between bg-[#F6F6F6] py-5 rounded-md">
-          <h2 className="text-base font-medium text-gray-800">
+        <div className="flex items-center justify-between bg-[#F6F6F6] py-5 px-6 rounded-md">
+          <h2 className="text-xl font-medium text-gray-800">
             About Us Landing Page
           </h2>
 
-          <div className="flex items-center space-x-5">
+          <div className="flex items-center space-x-5 min-w-[240px]">
             <Select
               onValueChange={(value) => setSelectedValue(value)}
               value={selectedValue}
             >
-              <SelectTrigger className="w-full cursor-pointer">
-                <SelectValue placeholder="Select Title" />
+              <SelectTrigger className="w-full cursor-pointer bg-white">
+                <SelectValue placeholder="Select Section" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -56,6 +58,19 @@ export default function AboutUsHeader() {
             </Select>
           </div>
         </div>
+
+        {/* When no section is selected */}
+        {!selectedValue && (
+          <div className="mt-8">
+            <EmptyState
+              variant="dashed"
+              icon={FileText}
+              title="No Section Selected"
+              description="Choose an About Us section from the dropdown above to view, edit, or configure its content."
+            />
+          </div>
+        )}
+
         {/* Modal rendered when selected */}
         {selectedValue === "Hero Section" && <AboutSection />}
         {selectedValue === "Who We Are" && <WhoWeAre />}

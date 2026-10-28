@@ -8,9 +8,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Link, Lock, LockOpen, Trash2 } from "lucide-react";
+import { Eye, Lock, LockOpen, Trash2 } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -31,6 +30,8 @@ import {
 import { USER_ROLES, USER_STATUS } from "@/types/users";
 import { getImageUrl } from "@/utils/image";
 import Pagination from "@/components/ui/pagination";
+import { EmptyTableRow } from "@/components/ui/empty-state";
+import { HardHat } from "lucide-react";
 
 export default function AllWorker() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,15 +171,44 @@ export default function AllWorker() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {workers.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-8 text-gray-500"
-                  >
-                    No workers found
-                  </TableCell>
-                </TableRow>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index} className="animate-pulse">
+                    <TableCell><div className="h-4 w-6 bg-slate-200 rounded" /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="h-9 w-9 bg-slate-200 rounded-full" />
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                      </div>
+                    </TableCell>
+                    <TableCell><div className="h-4 w-32 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-24 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-28 bg-slate-200 rounded" /></TableCell>
+                    <TableCell><div className="h-6 w-16 bg-slate-200 rounded-full" /></TableCell>
+                    <TableCell><div className="h-7 w-20 bg-slate-200 rounded" /></TableCell>
+                  </TableRow>
+                ))
+              ) : workers.length === 0 ? (
+                <EmptyTableRow
+                  colSpan={7}
+                  icon={HardHat}
+                  title="No Workers Found"
+                  description={
+                    statusFilter !== "all"
+                      ? `No workers found with "${statusFilter}" status.`
+                      : "There are currently no registered workers on the platform."
+                  }
+                  action={
+                    statusFilter !== "all" ? (
+                      <button
+                        onClick={() => handleStatusFilterChange("all")}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-700 underline cursor-pointer"
+                      >
+                        Clear status filter
+                      </button>
+                    ) : undefined
+                  }
+                />
               ) : (
                 workers.map((worker, index) => (
                   <TableRow key={worker._id}>
@@ -203,8 +233,8 @@ export default function AllWorker() {
                     <TableCell>
                       <Badge
                         className={`${worker.status === USER_STATUS.ACTIVE
-                            ? "bg-green-500 "
-                            : "bg-[#E02121]"
+                          ? "bg-green-500 "
+                          : "bg-[#E02121]"
                           } w-20 text-white`}
                       >
                         {worker.status === USER_STATUS.ACTIVE
@@ -223,11 +253,10 @@ export default function AllWorker() {
                       </span>
 
                       <span
-                        className={`bg-[#E6E6E6] p-1 rounded ${
-                          isUpdating
+                        className={`bg-[#E6E6E6] p-1 rounded ${isUpdating
                             ? "opacity-50 cursor-not-allowed"
                             : "cursor-pointer"
-                        }`}
+                          }`}
                         title={
                           worker.status === USER_STATUS.ACTIVE
                             ? "Block worker"
