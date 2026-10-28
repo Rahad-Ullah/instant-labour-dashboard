@@ -11,7 +11,9 @@ export default function Header({ coupon }: { coupon: ICoupon | null }) {
         <span className="bg-[#E6EEFC] p-3 rounded-full">
           <ArrowBigLeft />
         </span>
-        <h1 className="text-2xl font-semibold text-[#333333]">Subscriptions</h1>
+        <h1 className="text-2xl font-semibold text-[#333333]">
+          Subscription Packages
+        </h1>
       </div>
       <div className="flex items-center gap-5">
         <OfferModal
