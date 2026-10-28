@@ -13,7 +13,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative min-h-screen w-full flex flex-col justify-between items-center bg-[#F8FAFC] overflow-x-hidden px-4 py-8 sm:py-12 selection:bg-amber-100 selection:text-amber-900">
+    <div className="relative h-screen w-full flex flex-col justify-between items-center bg-[#F8FAFC] overflow-hidden px-4 py-4 sm:py-6 selection:bg-amber-100 selection:text-amber-900">
       {/* Decorative ambient auras matching Instant Labour brand colors (#0057DC & #FFC823) */}
       <div
         className="absolute -top-40 -left-40 w-[420px] h-[420px] bg-[#0057DC]/10 rounded-full blur-3xl pointer-events-none"
@@ -34,18 +34,13 @@ export default function AuthLayout({
         aria-hidden="true"
       />
 
-      {/* Spacer / Top Header */}
-      <div className="relative z-10 w-full max-w-md flex justify-center mb-2">
-        {/* Placeholder for top branding if needed */}
-      </div>
-
-      {/* Main Auth Content Container */}
-      <main className="relative z-10 w-full flex items-center justify-center my-auto">
+      {/* Main Auth Content Container - perfectly centered */}
+      <main className="relative z-10 w-full flex-1 flex items-center justify-center my-auto">
         {children}
       </main>
 
       {/* Trust & Security Footer */}
-      <footer className="relative z-10 w-full max-w-md pt-8 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+      <footer className="relative z-10 w-full max-w-md pt-2 pb-1 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 shrink-0">
         <span>© {new Date().getFullYear()} Instant Labour. All rights reserved.</span>
         <span className="hidden sm:inline text-slate-300">•</span>
         <span className="inline-flex items-center gap-1 text-slate-600 font-medium">

@@ -25,16 +25,9 @@ export default function LoginPage() {
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Login Card */}
-      <div className="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-900/5 transition-all">
+      <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-900/5 transition-all">
         {/* Header & Brand Identity */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-13 h-13 rounded-2xl bg-[#0057DC] flex items-center justify-center text-white shadow-lg shadow-blue-600/20 ring-4 ring-blue-50 mb-3">
-            <span className="font-extrabold text-xl tracking-tight text-white">IL</span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-[#0057DC] border border-blue-200/60 mb-2.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0057DC] animate-pulse" />
-            Admin Portal
-          </div>
+        <div className="flex flex-col items-center text-center mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Welcome Back
           </h1>

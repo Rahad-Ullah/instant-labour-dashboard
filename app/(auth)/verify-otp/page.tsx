@@ -36,9 +36,9 @@ export default function OtpVerificationPage() {
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Verify OTP Card */}
-      <div className="bg-white/95 backdrop-blur-md p-8 sm:p-10 rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-900/5 transition-all text-center">
+      <div className="bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xl shadow-slate-900/5 transition-all text-center">
         {/* Header */}
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-6">
           <div className="w-13 h-13 rounded-2xl bg-blue-50 border border-blue-200/60 flex items-center justify-center text-[#0057DC] shadow-xs ring-4 ring-blue-50/50 mb-3">
             <ShieldCheck className="w-6 h-6 stroke-[1.8]" />
           </div>
