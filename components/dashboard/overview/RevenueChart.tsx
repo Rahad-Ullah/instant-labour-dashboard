@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import YearDropdown from "./YearDropDown";
 import { useSearchParams, useRouter } from "next/navigation";
-import MonthDropdown from "./MonthDropdown";
 import { usePlatformRevenue } from "@/lib/query/hooks";
 
 type RevenueData = {
@@ -46,13 +45,9 @@ export default function GreenAreaChart() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const year = Number(searchParams.get("year")) || new Date().getFullYear();
-  const month = Number(searchParams.get("month")) || 12;
 
   // Use TanStack Query hook
-  const { data: revenueData = [], isLoading } = usePlatformRevenue({
-    year,
-    month,
-  });
+  const { data: revenueData = [], isLoading } = usePlatformRevenue({ year });
 
   const handleYearChange = (selectedYear: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -91,7 +86,6 @@ export default function GreenAreaChart() {
               selectedYear={year.toString()}
               onChange={handleYearChange}
             />
-            <MonthDropdown selectedMonth={month} onChange={handleMonthChange} />
           </div>
         </div>
         <div className="w-full h-[200px] lg:h-[220px] xl:h-[260px] flex items-center justify-center">
@@ -112,7 +106,6 @@ export default function GreenAreaChart() {
             selectedYear={year.toString()}
             onChange={handleYearChange}
           />
-          <MonthDropdown selectedMonth={month} onChange={handleMonthChange} />
         </div>
       </div>
 
@@ -138,13 +131,10 @@ export default function GreenAreaChart() {
               tickMargin={10}
             />
             <YAxis
-              domain={[0, 100]}
-              // ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]}
-              // tickFormatter={(v) => `${v}%`}
               tick={{ fontSize: 15 }}
               tickLine={false}
               axisLine={false}
-              tickMargin={12}
+              tickMargin={4}
             />
             <Tooltip content={renderCustomTooltip} />
             <Area
