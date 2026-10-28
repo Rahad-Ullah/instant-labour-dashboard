@@ -75,23 +75,40 @@ export const isAuthenticated = (): boolean => {
 
 
 export const getErrorMessage = (error: unknown): string => {
-    if (error instanceof AxiosError) {
-        const apiError = error.response?.data as ApiError;
+    // Check if error contains response data (Axios or similar)
+    const anyErr = error as any;
+    const responseData = anyErr?.response?.data;
 
-        // Check for structured error message
-        if (apiError?.message) {
-            return apiError.message;
+    if (responseData) {
+        // Check for errorMessages array (e.g. [{ message: "...", path: "..." }])
+        if (Array.isArray(responseData.errorMessages) && responseData.errorMessages.length > 0) {
+            const first = responseData.errorMessages[0];
+            if (typeof first === "string" && first) return first;
+            if (first?.message) return first.message;
         }
 
-        // Check for validation errors
-        if (apiError?.errors) {
-            const firstErrorKey = Object.keys(apiError.errors)[0];
-            const firstError = apiError.errors[firstErrorKey]?.[0];
-            if (firstError) {
+        // Check for structured error message
+        if (responseData.message && typeof responseData.message === "string") {
+            return responseData.message;
+        }
+
+        // Check for validation errors object
+        if (responseData.errors && typeof responseData.errors === "object") {
+            const firstErrorKey = Object.keys(responseData.errors)[0];
+            const firstError = responseData.errors[firstErrorKey];
+            if (Array.isArray(firstError) && firstError[0]) {
+                return firstError[0];
+            } else if (typeof firstError === "string") {
                 return firstError;
             }
         }
 
+        if (typeof responseData.error === "string" && responseData.error) {
+            return responseData.error;
+        }
+    }
+
+    if (error instanceof AxiosError) {
         // Fallback to generic error messages
         if (error.response?.status === 401) {
             return "Unauthorized. Please login again.";
@@ -118,6 +135,10 @@ export const getErrorMessage = (error: unknown): string => {
 
     if (error instanceof Error) {
         return error.message;
+    }
+
+    if (typeof error === "string") {
+        return error;
     }
 
     return "An unexpected error occurred.";

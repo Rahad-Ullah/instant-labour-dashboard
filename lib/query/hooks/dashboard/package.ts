@@ -3,6 +3,7 @@ import { queryKeys } from "../../keys";
 import { PackageApi } from "../../apis/package";
 import { toast } from "react-toastify";
 import { ICoupon, IPackage } from "@/types/others";
+import { getErrorMessage } from "@/lib/api-utils";
 
 export const useGetPackages = () => {
   return useQuery({
@@ -28,8 +29,10 @@ export const useCreatePackage = () => {
       toast.success(res.message || "Successfully created package");
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.package() });
     },
-    onError: (error) => {
-      toast.error(error.message || `Failed to create package`);
+    onError: (error: any) => {
+      toast.error(
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to create package"
+      );
     },
   });
 };
@@ -45,8 +48,10 @@ export const useUpdatePackage = (id: string) => {
       toast.success(res.message || "Successfully updated package");
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.package() });
     },
-    onError: (error) => {
-      toast.error(error.message || `Failed to update package`);
+    onError: (error: any) => {
+      toast.error(
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to update package"
+      );
     },
   });
 };
@@ -62,8 +67,10 @@ export const useTogglePackageStatus = (id: string) => {
       toast.success(res.message || "Successfully toggled package status");
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.package() });
     },
-    onError: (error) => {
-      toast.error(error.message || `Failed to toggle package status`);
+    onError: (error: any) => {
+      toast.error(
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to toggle package status"
+      );
     },
   });
 };
@@ -82,8 +89,10 @@ export const useApplyGlobalCoupon = () => {
       // Also invalidate coupon query to refresh the coupon data
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.coupon() });
     },
-    onError: (error) => {
-      toast.error(error.message || `Failed to apply coupon`);
+    onError: (error: any) => {
+      toast.error(
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to apply coupon"
+      );
     },
   });
 };
@@ -111,8 +120,10 @@ export const useDeleteGlobalCoupon = () => {
       toast.success(res.message || "Successfully deleted coupon");
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard.coupon() });
     },
-    onError: (error) => {
-      toast.error(error.message || `Failed to delete coupon`);
+    onError: (error: any) => {
+      toast.error(
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to delete coupon"
+      );
     },
   });
 };
@@ -130,7 +141,7 @@ export const useDeletePackage = () => {
     },
     onError: (error: any) => {
       toast.error(
-        error?.response?.data?.message || error?.message || "Failed to delete package"
+        getErrorMessage(error) || error?.response?.data?.message || error?.message || "Failed to delete package"
       );
     },
   });

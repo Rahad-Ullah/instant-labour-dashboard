@@ -8,9 +8,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, X } from "lucide-react";
+import { AlertCircle, Plus, X } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { IPackage } from "@/types/others";
+import { getErrorMessage } from "@/lib/api-utils";
 import {
   useCreatePackage,
   useUpdatePackage,
@@ -28,6 +29,7 @@ export default function SubscriptionModal({
   packageData?: IPackage;
 }) {
   const [open, setOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<IPackage>>({
     type: "",
     regularPrice: 0,
@@ -48,6 +50,7 @@ export default function SubscriptionModal({
 
   // Initialize form data when packageData changes
   useEffect(() => {
+    setErrorMessage(null);
     if (packageData) {
       setFormData({
         type: packageData.type,
@@ -114,13 +117,38 @@ export default function SubscriptionModal({
     }));
   };
 
+  const scrollToTop = () => {
+    const container = document.getElementById("subscription-modal-scroll-area");
+    if (container) {
+      container.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
+    if (!formData.type?.trim()) {
+      setErrorMessage("Please enter a package type name.");
+      scrollToTop();
+      return;
+    }
+
+    if (
+      formData.regularPrice === undefined ||
+      formData.regularPrice === null ||
+      Number(formData.regularPrice) < 0 ||
+      isNaN(Number(formData.regularPrice))
+    ) {
+      setErrorMessage("Please enter a valid regular price (0 or greater).");
+      scrollToTop();
+      return;
+    }
 
     // Prepare data according to server schema
     const submitData: any = {
-      type: formData.type,
-      regularPrice: formData.regularPrice,
+      type: formData.type.trim(),
+      regularPrice: Number(formData.regularPrice),
       description: formData.description,
       isInstantBooking: formData.isInstantBooking,
       interval: formData.interval,
@@ -138,10 +166,17 @@ export default function SubscriptionModal({
       }
       // Only close modal on success
       setOpen(false);
-    } catch (error) {
-      // Error is already handled by the mutation's onError callback
+      setErrorMessage(null);
+    } catch (error: any) {
       // Modal stays open so user can see the error and try again
       console.error("Failed to submit package:", error);
+      const message =
+        getErrorMessage(error) ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to submit package. Please check the form and try again.";
+      setErrorMessage(message);
+      scrollToTop();
     }
   };
 
@@ -151,15 +186,50 @@ export default function SubscriptionModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+          setErrorMessage(null);
+        }
+      }}
+    >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-3xl bg-white rounded-lg p-6 max-h-[90vh] overflow-y-auto">
+      <DialogContent
+        id="subscription-modal-scroll-area"
+        className="sm:max-w-3xl bg-white rounded-lg p-6 max-h-[90vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold mb-4">
             {packageData ? "Edit Package" : header || "Add Package"}
           </DialogTitle>
         </DialogHeader>
+
+        {/* Error Alert Banner */}
+        {errorMessage && (
+          <div
+            role="alert"
+            className="mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 animate-in fade-in-50 duration-200"
+          >
+            <AlertCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-red-900">
+                {packageData ? "Failed to update package" : "Failed to create package"}
+              </p>
+              <p className="mt-1 text-red-700 leading-relaxed break-words">{errorMessage}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setErrorMessage(null)}
+              aria-label="Dismiss error"
+              className="text-red-400 hover:text-red-700 p-1 rounded-md transition-colors shrink-0 cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Type */}
@@ -425,10 +495,25 @@ export default function SubscriptionModal({
             </div>
           </div>
 
+          {/* Bottom error indicator if scrolled down */}
+          {errorMessage && (
+            <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5">
+              <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+              <span className="truncate flex-1 font-medium">{errorMessage}</span>
+              <button
+                type="button"
+                onClick={scrollToTop}
+                className="text-xs text-red-600 hover:text-red-800 underline shrink-0 cursor-pointer"
+              >
+                View details
+              </button>
+            </div>
+          )}
+
           {/* Submit */}
           <Button
             type="submit"
-            className="w-full bg-[#FFC823] hover:bg-[#e6b51f] text-black text-lg font-semibold rounded-md py-6"
+            className="w-full bg-[#FFC823] hover:bg-[#e6b51f] text-black text-lg font-semibold rounded-md py-6 cursor-pointer"
             disabled={createPackage.isPending || updatePackage.isPending}
           >
             {createPackage.isPending || updatePackage.isPending
